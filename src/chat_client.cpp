@@ -13,7 +13,8 @@ zmq::context_t ctx;
 std::map<std::string,zmq::socket_t> name_to_socket;
 std::mutex name_to_socket_lock;
 
-void send_func(std::string whereis_endpoint)
+//send_func tager nu navnet på afsenderen med
+void send_func(std::string whereis_endpoint, std::string sender)
 {   
 
     zmq::socket_t sock(ctx,zmq::socket_type::req);
@@ -54,7 +55,7 @@ void send_func(std::string whereis_endpoint)
                 std::cout << "server resolved address of: '" << recipient << ", address is: '" << recipient_endpoint << "' " << std::endl;
                 zmq::socket_t sock(ctx,zmq::socket_type::push);
                 sock.connect(recipient_endpoint);
-                std::scoped_lock(name_to_socket_lock);
+                std::lock_guard<std::mutex> lg(name_to_socket_lock);
                 name_to_socket.emplace(recipient,std::move(sock));
                 
             }
@@ -62,9 +63,11 @@ void send_func(std::string whereis_endpoint)
         
         if (recipient_located)
         {
+            //sending the name of the sender into the buffer with the text
             maybe_socket = name_to_socket.find(recipient);
             std::cout << "sending message: '" << text << "' to: '" << recipient << "'" << std::endl; 
-            maybe_socket->second.send(zmq::buffer(text));
+            std::string full_message = sender + "," + text;
+            maybe_socket->second.send(zmq::buffer(full_message));
         }
     }
     
@@ -79,8 +82,13 @@ void recv_func(std::string endpoint)
 
     while(true)
     {
+        //Splitting the name and text into two parts
         auto _ = sock.recv(msg);
-        std::cout << "recieved message: '" << msg.to_string() << "'" << std::endl;
+        std::string full = msg.to_string();
+        auto split = full.find(",");
+        std::string sender = (split == std::string::npos) ? "<unknown>" : full.substr(0, split);
+        std::string text = (split == std::string::npos) ? full : full.substr(split + 1);
+        std::cout << "received message from '" << sender << "': '" << text << "'" << std::endl;
     }
 }
 
@@ -112,7 +120,8 @@ int main(int argc, char **argv)
     std::cout << "client successfully registered" << std::endl;
     std::cout << "to send a message type a message of the form: 'recipient,message' and then press enter" << std::endl;
 
-    std::thread send_thread(send_func,server_whereis_client_endpoint);
+    // taking the name of the sender client
+    std::thread send_thread(send_func,server_whereis_client_endpoint,name);
     std::thread recv_thread(recv_func,recv_endpoint);
 
     send_thread.join();

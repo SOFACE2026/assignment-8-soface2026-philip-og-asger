@@ -22,7 +22,6 @@ set(CMAKE_CXX_STANDARD 17)
 # )
 
 
-find_package(ZeroMQ REQUIRED)
 find_package(cppzmq REQUIRED)
 
 
