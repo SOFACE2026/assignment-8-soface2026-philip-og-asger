@@ -63,10 +63,10 @@ void send_func(std::string whereis_endpoint, std::string sender)
         
         if (recipient_located)
         {
-            //sending the name of the sender into the buffer with the text
+            // adding the sender to the text
             maybe_socket = name_to_socket.find(recipient);
             std::cout << "sending message: '" << text << "' to: '" << recipient << "'" << std::endl; 
-            std::string full_message = sender + "," + text;
+            std::string full_message = sender + ':' + text;
             maybe_socket->second.send(zmq::buffer(full_message));
         }
     }
@@ -82,13 +82,9 @@ void recv_func(std::string endpoint)
 
     while(true)
     {
-        //Splitting the name and text into two parts
+        //printing the new messege with the senders name
         auto _ = sock.recv(msg);
-        std::string full = msg.to_string();
-        auto split = full.find(",");
-        std::string sender = (split == std::string::npos) ? "<unknown>" : full.substr(0, split);
-        std::string text = (split == std::string::npos) ? full : full.substr(split + 1);
-        std::cout << "received message from '" << sender << "': '" << text << "'" << std::endl;
+        std::cout << "received message from '" << msg.to_string() << "'" << std::endl;
     }
 }
 
