@@ -24,10 +24,10 @@ An example could be when you browse the internet. In this case, the browser on y
 The role is decided in the software, so it is preemptively decided. The main part which distinguishes the server from the client is that the server is passively waiting for requests from clients, and then answering the requests when getting them. The client connects to the server and sends requests to the server, when it needs resources from the server.
 
 3 What is the difference between client-server architecture and the broker architecture?
-The difference between client-server architecture and broker architecture is that, in the client-server architecture, the communication between the server and client is direct; the client and server need to know of each other. In the broker architecture, the communication between the server and client goes through a broker; the broker is accountable for routing the communication between the client and the server, so the server and client don't know of each other.
+The difference between client-server architecture and broker architecture is that, in the client-server architecture, the communication between the server and client is direct, the client and server need to know of each other. In the broker architecture, the communication between the server and client goes through a broker, the broker is accountable for routing the communication between the client and the server, so the server and client don't know of each other.
 
 3.1 What are the benefits to the broker pattern?
-The benefits of the broker pattern are that the server and client are independent of each other. This means the broker pattern is more flexible; you can change components in the system freely, as long as the broker knows of the new components.
+The benefits of the broker pattern are that the server and client are independent of each other. This means the broker pattern is more flexible, you can change components in the system freely, as long as the broker knows of the new components.
 
 3.2 What could be potential downsides?
 A downside could be that the broker pattern adds complexity to the system.
@@ -38,7 +38,7 @@ Peer-to-Peer is a network structure where there is no server included; in this a
 
 4.1 What are the main characteristics of this architecture?
 This architecture is decentralized, which means there is no central server that controls the network.
-All the peers are equal; no peer has more control than others.
+All the peers are equal, no peer has more control than others.
 The peers have shared resources.
 
 4.2 Have you encountered it anywhere online?
